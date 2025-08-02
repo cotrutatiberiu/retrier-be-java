@@ -4,6 +4,8 @@ import com.trier.trier_report.config.JwtUtil;
 import com.trier.trier_report.dto.*;
 import com.trier.trier_report.entity.User;
 import com.trier.trier_report.service.UserService;
+import com.trier.trier_report.util.LoginDataSuccess;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -34,14 +36,20 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponsePayload> login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
         User user = userService.login(request);
 
 
         String email = user.getEmail();
-        LoginResponse loginResponse = new LoginResponse(jwtUtil.generateAccessToken(email), jwtUtil.generateRefreshToken(email), jwtUtil.getDefaultRefreshTokenExpirationMs());
-        Cookie cookie = (loginResponse.getRefreshTokenCookie());
+        LoginDataSuccess loginResponse = new LoginDataSuccess(jwtUtil.generateAccessToken(email), jwtUtil.generateRefreshToken(email), jwtUtil.getDefaultRefreshTokenExpirationMs());
+        Cookie cookie = loginResponse.getRefreshTokenCookie();
         response.addCookie(cookie);
-        return ResponseEntity.ok(new LoginResponsePayload(loginResponse.getAccessToken()));
+        return ResponseEntity.ok(new LoginResponse(loginResponse.getAccessToken()));
     }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<RefreshAccessTokenResponse> refreshToken(){
+        return ResponseEntity.ok(new RefreshAccessTokenResponse(""));
+    }
+
 }

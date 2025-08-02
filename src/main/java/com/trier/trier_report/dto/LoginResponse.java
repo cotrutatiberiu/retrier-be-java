@@ -1,45 +1,19 @@
 package com.trier.trier_report.dto;
 
-import jakarta.servlet.http.Cookie;
-
-import java.util.Date;
-
-public class LoginResponse {
+public class LoginResponse implements AccessToken {
     private String accessToken;
-    private String refreshToken;
-    private Cookie refreshTokenCookie;
 
-    public LoginResponse(String accessToken, String refreshToken, long refreshTokenExpirationMs) {
+    public LoginResponse(String accessToken) {
         this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        Cookie refreshTokenCookie = new Cookie("rt", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge((int) (refreshTokenExpirationMs / 100));
-        this.refreshTokenCookie = refreshTokenCookie;
     }
 
+    @Override
     public String getAccessToken() {
         return accessToken;
     }
 
+    @Override
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public Cookie getRefreshTokenCookie() {
-        return refreshTokenCookie;
-    }
-
-    public void setRefreshTokenCookie(Cookie refreshTokenCookie) {
-        this.refreshTokenCookie = refreshTokenCookie;
     }
 }
