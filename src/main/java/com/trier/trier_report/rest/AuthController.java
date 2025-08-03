@@ -4,17 +4,16 @@ import com.trier.trier_report.config.JwtUtil;
 import com.trier.trier_report.dto.*;
 import com.trier.trier_report.entity.User;
 import com.trier.trier_report.service.UserService;
-import com.trier.trier_report.util.LoginDataSuccess;
+import com.trier.trier_report.util.LoginResult;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,19 +36,28 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
-        User user = userService.login(request);
+        LoginResult loginResult = userService.authenticateAndGenerateTokens(request);
 
+        Cookie refreshTokenCookie = new Cookie("rt", loginResult.getAccessToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge((int) (jwtUtil.getDefaultRefreshTokenExpirationMs() / 100));
 
-        String email = user.getEmail();
-        LoginDataSuccess loginResponse = new LoginDataSuccess(jwtUtil.generateAccessToken(email), jwtUtil.generateRefreshToken(email), jwtUtil.getDefaultRefreshTokenExpirationMs());
-        Cookie cookie = loginResponse.getRefreshTokenCookie();
-        response.addCookie(cookie);
-        return ResponseEntity.ok(new LoginResponse(loginResponse.getAccessToken()));
+        response.addCookie(refreshTokenCookie);
+
+        return ResponseEntity.ok(new LoginResponse(loginResult.getAccessToken()));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<RefreshAccessTokenResponse> refreshToken(){
-        return ResponseEntity.ok(new RefreshAccessTokenResponse(""));
+    public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String refreshToken, @RequestHeader(value = "X-CSRF-TOKEN", required = false) String csrfToken, HttpServletResponse response) {
+        try {
+            String newAccessToken = jwtUtil.refreshAccessToken(refreshToken, csrfToken);
+            return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(401);
+            errorResponse.setErrors(new String[]{"Validation failed, please login again."});
+            return ResponseEntity.status(401).body(errorResponse);
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package com.trier.trier_report.config;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -55,11 +56,22 @@ public class JwtUtil {
         }
     }
 
-    public String getEmailFromAccessToken(String token){
+    public String getEmailFromAccessToken(String token) {
         return Jwts.parserBuilder().setSigningKey(accessKey).build().parseClaimsJwt(token).getBody().getSubject();
     }
 
-    public long getDefaultRefreshTokenExpirationMs(){
+    public String getEmailFromRefreshToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(refreshKey).build().parseClaimsJwt(token).getBody().getSubject();
+    }
+
+    public long getDefaultRefreshTokenExpirationMs() {
         return System.currentTimeMillis() + refreshTokenExpirationMs;
+    }
+
+    public String refreshAccessToken(String refreshToken, String csrfToken) {
+        if (validateRefreshToken(refreshToken) && validateAccessToken(csrfToken)) {
+            return generateAccessToken(getEmailFromAccessToken(refreshToken));
+        }
+        return null;
     }
 }
