@@ -1,6 +1,7 @@
 package com.trier.trier_report.security;
 
 import com.trier.trier_report.config.JwtUtil;
+import com.trier.trier_report.exception.AccessTokenExpiredException;
 import com.trier.trier_report.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -57,8 +58,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            filterChain.doFilter(request, response);
         }
 
-        filterChain.doFilter(request, response);
+        throw new AccessTokenExpiredException("Invalid credentials");
     }
 }

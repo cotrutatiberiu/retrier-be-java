@@ -6,6 +6,7 @@ import com.trier.trier_report.dto.UserLoginRequest;
 import com.trier.trier_report.dto.UserRegisterRequest;
 import com.trier.trier_report.dto.UserResponse;
 import com.trier.trier_report.entity.User;
+import com.trier.trier_report.exception.EmailUsedException;
 import com.trier.trier_report.util.LoginResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
         User user = new User(0, request.getFirstName(), request.getLastName(), request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getRole());
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already registered");
+            throw new EmailUsedException("Email already used");
         }
 
         User savedUser = userRepository.save(user);

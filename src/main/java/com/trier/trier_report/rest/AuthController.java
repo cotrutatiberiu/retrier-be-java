@@ -50,14 +50,8 @@ public class AuthController {
 
     @PostMapping("/refresh-token")
     public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String refreshToken, @RequestHeader(value = "X-CSRF-TOKEN", required = false) String csrfToken, HttpServletResponse response) {
-        try {
-            String newAccessToken = jwtUtil.refreshAccessToken(refreshToken, csrfToken);
-            return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(401);
-            errorResponse.setErrors(new String[]{"Validation failed, please login again."});
-            return ResponseEntity.status(401).body(errorResponse);
-        }
-    }
 
+        String newAccessToken = jwtUtil.refreshAccessToken(refreshToken, csrfToken);
+        return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));
+    }
 }

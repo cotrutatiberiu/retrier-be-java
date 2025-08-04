@@ -1,5 +1,6 @@
 package com.trier.trier_report.config;
 
+import com.trier.trier_report.exception.RefreshTokenExpiredException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -72,6 +73,6 @@ public class JwtUtil {
         if (validateRefreshToken(refreshToken) && validateAccessToken(csrfToken)) {
             return generateAccessToken(getEmailFromAccessToken(refreshToken));
         }
-        return null;
+        throw new RefreshTokenExpiredException("Validation failed, please login again.");
     }
 }
