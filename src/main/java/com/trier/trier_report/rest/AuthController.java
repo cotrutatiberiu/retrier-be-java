@@ -2,7 +2,6 @@ package com.trier.trier_report.rest;
 
 import com.trier.trier_report.config.JwtUtil;
 import com.trier.trier_report.dto.*;
-import com.trier.trier_report.entity.User;
 import com.trier.trier_report.service.UserService;
 import com.trier.trier_report.util.LoginResult;
 
@@ -12,8 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String refreshToken, @RequestHeader(value = "X-CSRF-TOKEN", required = false) String csrfToken, HttpServletResponse response) {
+    public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String refreshToken, @RequestHeader(value = "X-CSRF-TOKEN", required = false) String csrfToken) {
 
         String newAccessToken = jwtUtil.refreshAccessToken(refreshToken, csrfToken);
         return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));

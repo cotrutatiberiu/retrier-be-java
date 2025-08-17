@@ -1,0 +1,44 @@
+services:
+  app:
+    # We still use 'build: .' to create an image for the production environment,
+    # but for development, we will override the command and use a volume.
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    
+    # 1. ADDED: This is the key change.
+    # It mounts your current project directory (on your host machine)
+    # to the /app directory inside the container.
+    volumes:
+      - .:/app
+    
+    # 2. ADDED: Sets the working directory inside the container
+    # so that commands like 'mvn' or 'gradle' run from the right place.
+    working_dir: /app
+
+    # 3. ADDED: Overrides the default CMD in the Dockerfile to run
+    # the application in a development mode that supports hot-reloading.
+    # This assumes you are using Maven and have `spring-boot-devtools` enabled.
+    command: mvn spring-boot:run
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_APPLICATION_NAME: ${SPRING_APPLICATION_NAME}
+    env_file:
+      - .env
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

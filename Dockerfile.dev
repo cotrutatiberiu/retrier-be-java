@@ -1,0 +1,13 @@
+FROM eclipse-temurin:21-jdk
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
+
+# Create app folder
+WORKDIR /app
+
+# Dependencies will be cached if pom.xml changes
+COPY pom.xml .
+RUN mvn dependency:go-offline
+
+# Code will be mounted from host, so no COPY src here
