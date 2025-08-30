@@ -9,5 +9,4 @@ public class TrierReportApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TrierReportApplication.class, args);
 	}
-
 }
