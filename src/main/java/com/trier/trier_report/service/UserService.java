@@ -1,14 +1,74 @@
 package com.trier.trier_report.service;
 
+import com.trier.trier_report.config.JwtUtil;
+import com.trier.trier_report.dao.UserRepository;
 import com.trier.trier_report.dto.UserLoginRequest;
 import com.trier.trier_report.dto.UserRegisterRequest;
 import com.trier.trier_report.dto.UserResponse;
 import com.trier.trier_report.entity.User;
+import com.trier.trier_report.exception.EmailUsedException;
+import com.trier.trier_report.mapper.UserMapper;
 import com.trier.trier_report.util.LoginResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-public interface UserService {
+import java.util.Optional;
 
-    UserResponse register(UserRegisterRequest user);
+@Service
+public class UserService {
 
-    LoginResult authenticateAndGenerateTokens(UserLoginRequest user);
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UserService(AuthenticationManager authenticationManager, UserRepository userRepository, JwtUtil jwtUtil, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public UserResponse register(UserRegisterRequest request) {
+        User user = userMapper.toEntity(request);
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new EmailUsedException("Email already used");
+        }
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toUserResponse(savedUser);
+    }
+
+    public LoginResult authenticateAndGenerateTokens(UserLoginRequest userLoginRequest) {
+        String email = userLoginRequest.email();
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if (user.isEmpty() || !passwordEncoder.matches(userLoginRequest.password(), user.get().getPassword())) {
+            throw new BadCredentialsException("Invalid email or password");
+        }
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.email(), userLoginRequest.password()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return new LoginResult(jwtUtil.generateAccessToken(email), jwtUtil.generateRefreshToken(email), jwtUtil.getDefaultRefreshTokenExpirationMs());
+    }
+
+    public String isAuthenticated() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        return auth.getName();
+    }
 }

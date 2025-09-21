@@ -2,21 +2,7 @@ package com.trier.trier_report.dto;
 
 import com.trier.trier_report.util.ResponsePayload;
 
-public class RefreshAccessTokenResponse implements AccessToken {
-    private String accessToken;
-
-    public RefreshAccessTokenResponse(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    @Override
-    public String getAccessToken() {
-        return this.accessToken;
-    }
-
-    @Override
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
+public record RefreshAccessTokenResponse(
+        String accessToken
+) {
 }

@@ -51,4 +51,9 @@ public class AuthController {
         String newAccessToken = jwtUtil.refreshAccessToken(refreshToken, csrfToken);
         return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));
     }
+
+    @GetMapping("/authenticated")
+    public ResponseEntity<String> isAuthenticated(){
+        return ResponseEntity.ok(userService.isAuthenticated());
+    }
 }
