@@ -1,6 +1,7 @@
 package com.trier.trier_report.service;
 
-import com.trier.trier_report.config.JwtUtil;
+import com.trier.trier_report.util.CsrfTokenUtil;
+import com.trier.trier_report.util.JwtUtil;
 import com.trier.trier_report.dao.UserRepository;
 import com.trier.trier_report.dto.UserLoginRequest;
 import com.trier.trier_report.dto.UserRegisterRequest;
@@ -8,7 +9,6 @@ import com.trier.trier_report.dto.UserResponse;
 import com.trier.trier_report.entity.User;
 import com.trier.trier_report.exception.EmailUsedException;
 import com.trier.trier_report.mapper.UserMapper;
-import com.trier.trier_report.util.LoginResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
@@ -26,15 +25,13 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(AuthenticationManager authenticationManager, UserRepository userRepository, JwtUtil jwtUtil, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(AuthenticationManager authenticationManager, UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
     }
@@ -51,7 +48,7 @@ public class UserService {
         return userMapper.toUserResponse(savedUser);
     }
 
-    public LoginResult authenticateAndGenerateTokens(UserLoginRequest userLoginRequest) {
+    public String login(UserLoginRequest userLoginRequest) {
         String email = userLoginRequest.email();
         Optional<User> user = userRepository.findByEmail(email);
 
@@ -64,7 +61,7 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        return new LoginResult(jwtUtil.generateAccessToken(email), jwtUtil.generateRefreshToken(email), jwtUtil.getDefaultRefreshTokenExpirationMs());
+        return email;
     }
 
     public String isAuthenticated() {

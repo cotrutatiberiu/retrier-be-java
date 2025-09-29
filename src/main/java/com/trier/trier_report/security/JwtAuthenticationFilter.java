@@ -1,6 +1,7 @@
 package com.trier.trier_report.security;
 
-import com.trier.trier_report.config.JwtUtil;
+import com.trier.trier_report.util.CsrfTokenUtil;
+import com.trier.trier_report.util.JwtUtil;
 import com.trier.trier_report.exception.AccessTokenExpiredException;
 import com.trier.trier_report.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
@@ -12,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,23 +22,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<String> EXCLUDED_PATHS = List.of(
             "/api/auth/login",
-            "/api/auth/register"
+            "/api/auth/register",
+            "/api/auth/refresh-token"
     );
 
-    private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
+    private final HandlerExceptionResolver resolver;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
-        this.jwtUtil = jwtUtil;
+    public JwtAuthenticationFilter(CustomUserDetailsService customUserDetailsService, HandlerExceptionResolver resolver) {
         this.customUserDetailsService = customUserDetailsService;
-    }
-
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+        this.resolver = resolver;
     }
 
     @Override
@@ -48,21 +43,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = getJwtFromRequest(request);
+        String accessToken = JwtUtil.getAccessTokenFromRequest(request);
 
-        if (token != null && jwtUtil.validateAccessToken(token)) {
-            String email = jwtUtil.getEmailFromAccessToken(token);
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        try {
+            if (accessToken != null && JwtUtil.validateAccessToken(accessToken) && CsrfTokenUtil.validateCsrfToken(request)) {
+                String email = JwtUtil.getEmailFromAccessToken(accessToken);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
-            filterChain.doFilter(request, response);
-            return;
+                filterChain.doFilter(request, response);
+                return;
+            } else {
+                throw new AccessTokenExpiredException("Invalid credentials");
+            }
+        } catch (AccessTokenExpiredException ex) {
+            resolver.resolveException(request, response, null, ex);
         }
-
-        throw new AccessTokenExpiredException("Invalid credentials");
     }
 }

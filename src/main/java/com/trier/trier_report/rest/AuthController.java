@@ -1,9 +1,9 @@
 package com.trier.trier_report.rest;
 
-import com.trier.trier_report.config.JwtUtil;
+import com.trier.trier_report.util.CsrfTokenUtil;
+import com.trier.trier_report.util.JwtUtil;
 import com.trier.trier_report.dto.*;
 import com.trier.trier_report.service.UserService;
-import com.trier.trier_report.util.LoginResult;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    private final JwtUtil jwtUtil;
 
-    public AuthController(UserService userService, JwtUtil jwtUtil) {
+    public AuthController(UserService userService) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register") //@Valid for jakarta request body validation
@@ -33,27 +31,37 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
-        LoginResult loginResult = userService.authenticateAndGenerateTokens(request);
+        String loggedEmail = userService.login(request);
 
-        Cookie refreshTokenCookie = new Cookie("rt", loginResult.getAccessToken());
+        String accessToken = JwtUtil.generateAccessToken(loggedEmail);
+        String refreshToken = JwtUtil.generateRefreshToken(loggedEmail);
+        String csrfToken = CsrfTokenUtil.generateToken();
+
+        Cookie refreshTokenCookie = new Cookie("rt", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge((int) (jwtUtil.getDefaultRefreshTokenExpirationMs() / 100));
+        refreshTokenCookie.setMaxAge((int) (JwtUtil.getDefaultRefreshTokenExpirationMs() / 100));
+
+        Cookie csrfTokenCookie = new Cookie("ct", csrfToken);
+        csrfTokenCookie.setHttpOnly(true);
+        csrfTokenCookie.setPath("/");
+        csrfTokenCookie.setMaxAge((int) (CsrfTokenUtil.getDefaultCsrfTokenExpirationMs() / 100));
 
         response.addCookie(refreshTokenCookie);
+        response.addCookie(csrfTokenCookie);
 
-        return ResponseEntity.ok(new LoginResponse(loginResult.getAccessToken()));
+        return ResponseEntity.ok(new LoginResponse(accessToken, csrfToken));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String refreshToken, @RequestHeader(value = "X-CSRF-TOKEN", required = false) String csrfToken) {
+    public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String cookieRefreshToken, @CookieValue(value = "ct", required = false) String cookieCsrfToken, @RequestHeader(value = "X-CSRF-TOKEN", required = false) String headerCsrfToken) {
 
-        String newAccessToken = jwtUtil.refreshAccessToken(refreshToken, csrfToken);
+        String newAccessToken = JwtUtil.refreshAccessToken(cookieRefreshToken);
         return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));
     }
 
     @GetMapping("/authenticated")
-    public ResponseEntity<String> isAuthenticated(){
+    public ResponseEntity<String> isAuthenticated() {
         return ResponseEntity.ok(userService.isAuthenticated());
     }
 }
