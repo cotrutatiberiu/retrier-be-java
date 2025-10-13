@@ -14,7 +14,7 @@ import java.util.Map;
 @Component
 public class OpenWeatherClient {
     // TODO: move in super secret location
-    private final String API_KEY = "ad1ca86b26c60fa7e8cc5221e0a18e2c";
+    private final String API_KEY = "5ad1ca86b26c60fa7e8cc5221e0a18e2c3";
     private final String URL = "https://api.openweathermap.org/data/2.5";
     private final String PARAMS = "/weather?lat={lat}&lon={lon}&appid={key}";
     private final RestClient restClient;
