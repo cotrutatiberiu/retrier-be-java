@@ -23,7 +23,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> EXCLUDED_PATHS = List.of(
             "/api/auth/login",
             "/api/auth/register",
-            "/api/auth/refresh-token"
+            "/api/auth/refresh-token",
+            "/api/weather/today"
     );
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -56,7 +57,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
                 filterChain.doFilter(request, response);
-                return;
             } else {
                 throw new AccessTokenExpiredException("Invalid credentials");
             }

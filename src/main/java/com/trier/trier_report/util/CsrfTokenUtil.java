@@ -27,6 +27,6 @@ public class CsrfTokenUtil {
     }
 
     public static boolean validateCsrfToken(HttpServletRequest request) {
-        return getCsrfTokenFromRequest(request).equals(CookieUtil.getValueFromCookie(request, "X-CSRF-TOKEN"));
+        return getCsrfTokenFromRequest(request).equals(CookieUtil.getValueFromCookie(request, "ct"));
     }
 }

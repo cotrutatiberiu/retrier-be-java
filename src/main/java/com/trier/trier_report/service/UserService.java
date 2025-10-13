@@ -59,14 +59,12 @@ public class UserService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.email(), userLoginRequest.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
 
         return email;
     }
 
     public String isAuthenticated() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth.isAuthenticated());
 
         return auth.getName();
     }
