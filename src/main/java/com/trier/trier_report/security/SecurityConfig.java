@@ -36,8 +36,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // disable CSRF for non-browser clients like Postman
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() //
-                        .requestMatchers("/api/weather/**").permitAll() //
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated() // all other endpoints require login
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // each request is a new session

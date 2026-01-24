@@ -1,13 +1,10 @@
-FROM eclipse-temurin:21-jdk
+FROM maven:3.9-eclipse-temurin-21
 
-# Install Maven
-RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
-
-# Create app folder
 WORKDIR /app
 
-# Dependencies will be cached if pom.xml changes
+# Cache dependencies first
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn -q -DskipTests dependency:go-offline
 
-# Code will be mounted from host, so no COPY src here
+# Source will be mounted by docker-compose (volume .:/app)
+CMD ["mvn", "spring-boot:run"]

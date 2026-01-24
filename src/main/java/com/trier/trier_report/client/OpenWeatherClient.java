@@ -2,7 +2,6 @@ package com.trier.trier_report.client;
 
 
 import com.trier.trier_report.dto.OpenWeatherResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -14,7 +13,7 @@ import java.util.Map;
 @Component
 public class OpenWeatherClient {
     // TODO: move in super secret location
-    private final String API_KEY = "5ad1ca86b26c60fa7e8cc5221e0a18e2c3";
+    private final String API_KEY = "ad1ca86b26c60fa7e8cc5221e0a18e2c";
     private final String URL = "https://api.openweathermap.org/data/2.5";
     private final String PARAMS = "/weather?lat={lat}&lon={lon}&appid={key}";
     private final RestClient restClient;
@@ -23,12 +22,12 @@ public class OpenWeatherClient {
         this.restClient = RestClient.builder().baseUrl(URL).build();
     }
 
-    public OpenWeatherResponse fetchWeather() {
+    public OpenWeatherResponse fetchWeather(String lon, String lat) {
         Map<String, String> uriVariables = new HashMap<>();
-        uriVariables.put("lat", "40");
-        uriVariables.put("lon", "40");
+        uriVariables.put("lat", lon);
+        uriVariables.put("lon", lat);
         uriVariables.put("key", API_KEY);
-
+        System.out.println("Open Weather third party hit");
         try {
             return this.restClient.get()
                     .uri(PARAMS, uriVariables)
