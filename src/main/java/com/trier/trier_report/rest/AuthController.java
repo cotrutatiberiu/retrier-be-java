@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register") //@Valid for jakarta request body validation
@@ -33,14 +35,14 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
         String loggedEmail = userService.login(request);
 
-        String accessToken = JwtUtil.generateAccessToken(loggedEmail);
-        String refreshToken = JwtUtil.generateRefreshToken(loggedEmail);
+        String accessToken = jwtUtil.generateAccessToken(loggedEmail);
+        String refreshToken = jwtUtil.generateRefreshToken(loggedEmail);
         String csrfToken = CsrfTokenUtil.generateToken();
 
         Cookie refreshTokenCookie = new Cookie("rt", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge((int) (JwtUtil.getDefaultRefreshTokenExpirationMs() / 100));
+        refreshTokenCookie.setMaxAge((int) (jwtUtil.getDefaultRefreshTokenExpirationMs() / 100));
 
         Cookie csrfTokenCookie = new Cookie("ct", csrfToken);
         csrfTokenCookie.setHttpOnly(true);
@@ -56,7 +58,7 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String cookieRefreshToken, @CookieValue(value = "ct", required = false) String cookieCsrfToken, @RequestHeader(value = "X-CSRF-TOKEN", required = false) String headerCsrfToken) {
 
-        String newAccessToken = JwtUtil.refreshAccessToken(cookieRefreshToken);
+        String newAccessToken = jwtUtil.refreshAccessToken(cookieRefreshToken);
         return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));
     }
 

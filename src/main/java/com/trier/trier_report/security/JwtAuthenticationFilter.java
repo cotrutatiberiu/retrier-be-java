@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final CustomUserDetailsService customUserDetailsService;
+    private final HandlerExceptionResolver resolver;
+    private final JwtUtil jwtUtil;
 
     private static final List<String> EXCLUDED_PATHS = List.of(
             "/api/auth/login",
@@ -26,12 +29,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/auth/refresh-token"
     );
 
-    private final CustomUserDetailsService customUserDetailsService;
-    private final HandlerExceptionResolver resolver;
-
-    public JwtAuthenticationFilter(CustomUserDetailsService customUserDetailsService, HandlerExceptionResolver resolver) {
+    public JwtAuthenticationFilter(CustomUserDetailsService customUserDetailsService, HandlerExceptionResolver resolver, JwtUtil jwtUtil) {
         this.customUserDetailsService = customUserDetailsService;
         this.resolver = resolver;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -43,11 +44,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String accessToken = JwtUtil.getAccessTokenFromRequest(request);
+        String accessToken = jwtUtil.getAccessTokenFromRequest(request);
 
         try {
-            if (accessToken != null && JwtUtil.validateAccessToken(accessToken) && CsrfTokenUtil.validateCsrfToken(request)) {
-                String email = JwtUtil.getEmailFromAccessToken(accessToken);
+            if (accessToken != null && jwtUtil.validateAccessToken(accessToken) && CsrfTokenUtil.validateCsrfToken(request)) {
+                String email = jwtUtil.getEmailFromAccessToken(accessToken);
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

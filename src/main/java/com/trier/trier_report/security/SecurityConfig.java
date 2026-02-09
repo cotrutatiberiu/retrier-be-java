@@ -22,13 +22,12 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
     @Qualifier("handlerExceptionResolver")
-    @Autowired
     HandlerExceptionResolver resolver;
+
+    JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,7 +39,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // all other endpoints require login
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // each request is a new session
-                .addFilterBefore(new JwtAuthenticationFilter(customUserDetailsService, resolver), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(customUserDetailsService, resolver, jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
