@@ -1,6 +1,5 @@
 package com.trier.trier_report.security;
 
-import com.trier.trier_report.util.CsrfTokenUtil;
 import com.trier.trier_report.util.JwtUtil;
 import com.trier.trier_report.exception.AccessTokenExpiredException;
 import com.trier.trier_report.service.CustomUserDetailsService;
@@ -8,16 +7,20 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.List;
 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final CustomUserDetailsService customUserDetailsService;
     private final HandlerExceptionResolver resolver;
@@ -30,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/auth/csrf"
     );
 
-    public JwtAuthenticationFilter(CustomUserDetailsService customUserDetailsService, HandlerExceptionResolver resolver, JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(CustomUserDetailsService customUserDetailsService, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver, JwtUtil jwtUtil) {
         this.customUserDetailsService = customUserDetailsService;
         this.resolver = resolver;
         this.jwtUtil = jwtUtil;
@@ -48,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = jwtUtil.getAccessTokenFromRequest(request);
 
         try {
-            if (accessToken != null && jwtUtil.validateAccessToken(accessToken) && CsrfTokenUtil.validateCsrfToken(request)) {
+            if (accessToken != null && jwtUtil.validateAccessToken(accessToken)) {
                 String email = jwtUtil.getEmailFromAccessToken(accessToken);
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
 

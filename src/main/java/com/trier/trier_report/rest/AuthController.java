@@ -1,6 +1,5 @@
 package com.trier.trier_report.rest;
 
-import com.trier.trier_report.util.CsrfTokenUtil;
 import com.trier.trier_report.util.JwtUtil;
 import com.trier.trier_report.dto.*;
 import com.trier.trier_report.service.UserService;
@@ -37,22 +36,15 @@ public class AuthController {
 
         String accessToken = jwtUtil.generateAccessToken(loggedEmail);
         String refreshToken = jwtUtil.generateRefreshToken(loggedEmail);
-        String csrfToken = CsrfTokenUtil.generateToken();
 
         Cookie refreshTokenCookie = new Cookie("rt", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge((int) (jwtUtil.getDefaultRefreshTokenExpirationSeconds()));
 
-        Cookie csrfTokenCookie = new Cookie("ct", csrfToken);
-        csrfTokenCookie.setHttpOnly(true);
-        csrfTokenCookie.setPath("/");
-        csrfTokenCookie.setMaxAge((int) (CsrfTokenUtil.getDefaultCsrfTokenExpirationSeconds()));
-
         response.addCookie(refreshTokenCookie);
-        response.addCookie(csrfTokenCookie);
 
-        return ResponseEntity.ok(new LoginResponse(accessToken, csrfToken));
+        return ResponseEntity.ok(new LoginResponse(accessToken));
     }
 
     @PostMapping("/refresh-token")

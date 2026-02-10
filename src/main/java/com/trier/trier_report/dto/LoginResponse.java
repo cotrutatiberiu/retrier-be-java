@@ -1,8 +1,7 @@
 package com.trier.trier_report.dto;
 
 public record LoginResponse(
-        String accessToken,
-        String csrfToken
+        String accessToken
 ) {
 }
 

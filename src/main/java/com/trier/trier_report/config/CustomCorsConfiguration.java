@@ -22,7 +22,7 @@ public class CustomCorsConfiguration {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // Allow specific headers
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-CSRF-TOKEN"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
 
         // Allow credentials (cookies, authorization headers, etc.)
         config.setAllowCredentials(true);

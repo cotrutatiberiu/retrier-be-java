@@ -1,7 +1,5 @@
 package com.trier.trier_report.service;
 
-import com.trier.trier_report.util.CsrfTokenUtil;
-import com.trier.trier_report.util.JwtUtil;
 import com.trier.trier_report.dao.UserRepository;
 import com.trier.trier_report.dto.UserLoginRequest;
 import com.trier.trier_report.dto.UserRegisterRequest;
