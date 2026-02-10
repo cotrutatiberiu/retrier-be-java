@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,6 +42,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
 
+        // Always allow preflight
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         if (EXCLUDED_PATHS.contains(path)) {
             filterChain.doFilter(request, response); // skip filter
             return;
@@ -50,22 +55,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = jwtUtil.getAccessTokenFromRequest(request);
 
-        try {
-            if (accessToken != null && jwtUtil.validateAccessToken(accessToken)) {
-                String email = jwtUtil.getEmailFromAccessToken(accessToken);
-                UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
-
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-                filterChain.doFilter(request, response);
-            } else {
-                throw new AccessTokenExpiredException("Invalid credentials");
-            }
-        } catch (AccessTokenExpiredException ex) {
-            resolver.resolveException(request, response, null, ex);
+        // No token? just continue
+        if (accessToken == null) {
+            filterChain.doFilter(request, response);
+            return;
         }
+
+        // Invalid token? continue (Security will reject if endpoint is protected)
+        if (!jwtUtil.validateAccessToken(accessToken)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String email = jwtUtil.getEmailFromAccessToken(accessToken);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+
+        var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        filterChain.doFilter(request, response);
     }
 }

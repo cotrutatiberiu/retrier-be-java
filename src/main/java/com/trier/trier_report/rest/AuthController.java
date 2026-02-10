@@ -48,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String cookieRefreshToken, @CookieValue(value = "ct", required = false) String cookieCsrfToken, @RequestHeader(value = "X-CSRF-TOKEN", required = false) String headerCsrfToken) {
+    public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String cookieRefreshToken) {
 
         String newAccessToken = jwtUtil.refreshAccessToken(cookieRefreshToken);
         return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));
