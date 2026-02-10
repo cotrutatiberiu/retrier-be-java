@@ -20,8 +20,8 @@ public class JwtUtil {
     @Value("${auth.refresh-secret-token}")
     private String REFRESH_SECRET;
 
-    private final static long accessTokenExpirationMs = 15 * 60 * 1000;
-    private final static long refreshTokenExpirationMs = 7 * 24 * 60 * 60 * 1000;
+    private final static long accessTokenExpirationSeconds = 15 * 60;
+    private final static long refreshTokenExpirationSeconds = 7 * 24 * 60 * 60;
 
     private Key getAccessKey() {
         return Keys.hmacShaKeyFor(ACCESS_SECRET.getBytes());
@@ -35,7 +35,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationMs))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpirationSeconds * 1000L))
                 .signWith(getAccessKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -44,7 +44,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpirationMs))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpirationSeconds * 1000L))
                 .signWith(getRefreshKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -75,8 +75,8 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(getRefreshKey()).build().parseClaimsJws(token).getBody().getSubject();
     }
 
-    public long getDefaultRefreshTokenExpirationMs() {
-        return System.currentTimeMillis() + refreshTokenExpirationMs;
+    public long getDefaultRefreshTokenExpirationSeconds() {
+        return refreshTokenExpirationSeconds;
     }
 
     public String refreshAccessToken(String cookieRefreshToken) {

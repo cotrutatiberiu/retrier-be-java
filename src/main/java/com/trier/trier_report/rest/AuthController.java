@@ -42,12 +42,12 @@ public class AuthController {
         Cookie refreshTokenCookie = new Cookie("rt", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge((int) (jwtUtil.getDefaultRefreshTokenExpirationMs() / 100));
+        refreshTokenCookie.setMaxAge((int) (jwtUtil.getDefaultRefreshTokenExpirationSeconds()));
 
         Cookie csrfTokenCookie = new Cookie("ct", csrfToken);
         csrfTokenCookie.setHttpOnly(true);
         csrfTokenCookie.setPath("/");
-        csrfTokenCookie.setMaxAge((int) (CsrfTokenUtil.getDefaultCsrfTokenExpirationMs() / 100));
+        csrfTokenCookie.setMaxAge((int) (CsrfTokenUtil.getDefaultCsrfTokenExpirationSeconds()));
 
         response.addCookie(refreshTokenCookie);
         response.addCookie(csrfTokenCookie);

@@ -26,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final List<String> EXCLUDED_PATHS = List.of(
             "/api/auth/login",
             "/api/auth/register",
-            "/api/auth/refresh-token"
+            "/api/auth/refresh-token",
+            "/api/auth/csrf"
     );
 
     public JwtAuthenticationFilter(CustomUserDetailsService customUserDetailsService, HandlerExceptionResolver resolver, JwtUtil jwtUtil) {

@@ -8,12 +8,12 @@ import java.util.Base64;
 import java.util.Objects;
 
 public class CsrfTokenUtil {
-    private final static long csrfTokenExpirationMs = 7 * 24 * 60 * 60 * 1000;
+    private final static long csrfTokenExpirationSeconds = 7 * 24 * 60 * 60;
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final Base64.Encoder base64Encoder = Base64.getEncoder();
 
-    public static long getDefaultCsrfTokenExpirationMs() {
-        return System.currentTimeMillis() + csrfTokenExpirationMs;
+    public static long getDefaultCsrfTokenExpirationSeconds() {
+        return csrfTokenExpirationSeconds;
     }
 
     public static String generateToken() {
