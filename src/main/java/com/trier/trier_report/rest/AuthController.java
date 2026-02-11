@@ -7,7 +7,9 @@ import com.trier.trier_report.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +41,7 @@ public class AuthController {
 
         Cookie refreshTokenCookie = new Cookie("rt", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setPath("/api/auth");
         refreshTokenCookie.setMaxAge((int) (jwtUtil.getDefaultRefreshTokenExpirationSeconds()));
 
         response.addCookie(refreshTokenCookie);
@@ -57,5 +59,13 @@ public class AuthController {
     @GetMapping("/authenticated")
     public ResponseEntity<String> isAuthenticated() {
         return ResponseEntity.ok(userService.isAuthenticated());
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        Cookie refreshCookie = new Cookie("nt", "");
+        refreshCookie.setMaxAge(0);
+        refreshCookie.setPath("/api/auth");
+        return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, refreshCookie.toString()).build();
     }
 }
