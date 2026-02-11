@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
@@ -24,11 +25,11 @@ public class JwtUtil {
     private final static long refreshTokenExpirationSeconds = 7 * 24 * 60 * 60;
 
     private Key getAccessKey() {
-        return Keys.hmacShaKeyFor(ACCESS_SECRET.getBytes());
+        return Keys.hmacShaKeyFor(ACCESS_SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
     private Key getRefreshKey() {
-        return Keys.hmacShaKeyFor(REFRESH_SECRET.getBytes());
+        return Keys.hmacShaKeyFor(REFRESH_SECRET.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateAccessToken(String email) {
@@ -80,6 +81,10 @@ public class JwtUtil {
     }
 
     public String refreshAccessToken(String cookieRefreshToken) {
+        if (cookieRefreshToken == null || cookieRefreshToken.isBlank()) {
+            throw new RefreshTokenExpiredException("Missing refresh token");
+        }
+
         if (validateRefreshToken(cookieRefreshToken)) {
             return generateAccessToken(getEmailFromRefreshToken(cookieRefreshToken));
         }
