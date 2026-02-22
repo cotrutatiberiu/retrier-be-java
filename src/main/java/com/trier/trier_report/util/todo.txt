@@ -1,0 +1,126 @@
+Phase 1 – Users & Auth (you already did most of this)
+
+User registration
+
+Login with access + refresh token
+
+CSRF protection (cookie + header)
+
+JWT filter & authentication
+
+Secure endpoints
+
+Phase 2 – Accounts (Money containers)
+
+Create account (e.g. Cash, Bank, Savings)
+
+List user accounts
+
+Update account name / currency
+
+Delete account
+
+Store balance (numeric type)
+
+Phase 3 – Categories (Hierarchy)
+
+Create category (with optional parent_id)
+
+List categories (flat)
+
+Build category tree (parent → children)
+
+Prevent duplicate names per parent
+
+Prevent circular references (important)
+
+Phase 4 – Transactions (Core logic)
+
+Create transaction (income / expense)
+
+Link transaction to:
+
+account_id
+
+category_id
+
+Update account balance on transaction
+
+Delete transaction (reverse balance)
+
+Edit transaction (recalculate balance)
+
+Phase 5 – Advanced Queries (SQL power)
+
+Get total spending per category
+
+Get totals grouped by month
+
+Filter transactions by:
+
+date range
+
+category
+
+account
+
+Aggregate queries (SUM, GROUP BY)
+
+Use indexes for performance
+
+Phase 6 – Concurrency (important backend concept)
+
+Simulate 2 transactions at the same time
+
+Handle race conditions on balance
+
+Use:
+
+@Transactional
+
+isolation levels OR
+
+optimistic locking (@Version)
+
+Prevent inconsistent balances
+
+Phase 7 – Budgets (real-world feature)
+
+Create monthly budget per category
+
+Compare:
+
+actual spending vs budget
+
+Show remaining budget
+
+Trigger warnings when exceeded
+
+Phase 8 – Data Integrity & Validation
+
+Validate ownership (user can’t access others' data)
+
+Enforce foreign key constraints
+
+Add unique indexes (like categories)
+
+Handle edge cases (nulls, invalid IDs)
+
+Phase 9 – Performance & Production Thinking
+
+Add pagination for transactions
+
+Add indexes on:
+
+user_id
+
+created_at
+
+Optimize heavy queries
+
+Add caching (optional, later)
+
+Logging & error handling improvements
+
+
+Excel manipulation, download,create etc
