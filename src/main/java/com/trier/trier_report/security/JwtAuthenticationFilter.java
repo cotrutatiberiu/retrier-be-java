@@ -60,7 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Invalid token? continue (Security will reject if endpoint is protected)
         if (!jwtUtil.validateAccessToken(accessToken)) {
             filterChain.doFilter(request, response);
             return;
