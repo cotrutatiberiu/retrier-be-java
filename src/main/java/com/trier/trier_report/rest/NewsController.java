@@ -1,7 +1,7 @@
 package com.trier.trier_report.rest;
 
 import com.trier.trier_report.dto.NewsResponse;
-import com.trier.trier_report.service.NewsService;
+import com.trier.trier_report.service.impl.NewsServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/news")
 public class NewsController {
-    private final NewsService newsService;
+    private final NewsServiceImpl newsServiceImpl;
 
-    public NewsController(NewsService newsService) {
-        this.newsService = newsService;
+    public NewsController(NewsServiceImpl newsServiceImpl) {
+        this.newsServiceImpl = newsServiceImpl;
     }
 
     @GetMapping("/today")
@@ -23,6 +23,6 @@ public class NewsController {
             @RequestParam(required = true, defaultValue = "") String from,
             @RequestParam(required = true, defaultValue = "") String sortBy
     ) {
-        return ResponseEntity.ok(newsService.getNews(q, from, sortBy));
+        return ResponseEntity.ok(newsServiceImpl.getNews(q, from, sortBy));
     }
 }

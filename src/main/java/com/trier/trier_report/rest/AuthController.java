@@ -2,14 +2,13 @@ package com.trier.trier_report.rest;
 
 import com.trier.trier_report.util.JwtUtil;
 import com.trier.trier_report.dto.*;
-import com.trier.trier_report.service.UserService;
+import com.trier.trier_report.service.impl.UserServiceImpl;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,24 +16,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
     private final JwtUtil jwtUtil;
 
-    public AuthController(UserService userService, JwtUtil jwtUtil) {
-        this.userService = userService;
+    public AuthController(UserServiceImpl userServiceImpl, JwtUtil jwtUtil) {
+        this.userServiceImpl = userServiceImpl;
         this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/register") //@Valid for jakarta request body validation
     public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRegisterRequest request) {
-        UserResponse response = userService.register(request);
+        UserResponse response = userServiceImpl.register(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
-        String loggedEmail = userService.login(request);
+        String loggedEmail = userServiceImpl.login(request);
 
         String accessToken = jwtUtil.generateAccessToken(loggedEmail);
         String refreshToken = jwtUtil.generateRefreshToken(loggedEmail);
@@ -58,7 +57,7 @@ public class AuthController {
 
     @GetMapping("/authenticated")
     public ResponseEntity<String> isAuthenticated() {
-        return ResponseEntity.ok(userService.isAuthenticated());
+        return ResponseEntity.ok(userServiceImpl.isAuthenticated());
     }
 
     @PostMapping("/logout")

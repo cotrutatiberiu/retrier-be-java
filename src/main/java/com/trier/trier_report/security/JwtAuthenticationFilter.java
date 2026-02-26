@@ -1,8 +1,7 @@
 package com.trier.trier_report.security;
 
 import com.trier.trier_report.util.JwtUtil;
-import com.trier.trier_report.exception.AccessTokenExpiredException;
-import com.trier.trier_report.service.CustomUserDetailsService;
+import com.trier.trier_report.service.impl.CustomUserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +20,7 @@ import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsServiceImpl customUserDetailsServiceImpl;
     private final HandlerExceptionResolver resolver;
     private final JwtUtil jwtUtil;
 
@@ -32,8 +31,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/api/auth/csrf"
     );
 
-    public JwtAuthenticationFilter(CustomUserDetailsService customUserDetailsService, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver, JwtUtil jwtUtil) {
-        this.customUserDetailsService = customUserDetailsService;
+    public JwtAuthenticationFilter(CustomUserDetailsServiceImpl customUserDetailsServiceImpl, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver, JwtUtil jwtUtil) {
+        this.customUserDetailsServiceImpl = customUserDetailsServiceImpl;
         this.resolver = resolver;
         this.jwtUtil = jwtUtil;
     }
@@ -68,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String email = jwtUtil.getEmailFromAccessToken(accessToken);
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = customUserDetailsServiceImpl.loadUserByUsername(email);
 
         var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
