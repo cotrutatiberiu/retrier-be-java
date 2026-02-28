@@ -1,4 +1,4 @@
-package com.trier.trier_report.rest;
+package com.trier.trier_report.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;

@@ -1,4 +1,4 @@
-package com.trier.trier_report.rest;
+package com.trier.trier_report.controller;
 
 import com.trier.trier_report.dto.NewsResponse;
 import com.trier.trier_report.service.NewsService;

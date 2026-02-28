@@ -15,10 +15,10 @@ public class UserMapper {
     }
 
     public User toEntity(UserRegisterRequest command) {
-        return new User(0, command.firstName(), command.lastName(), command.email(), passwordEncoder.encode(command.password()), command.role());
+        return new User(0, command.firstName(), command.lastName(), command.email(), passwordEncoder.encode(command.password()), command.roleId(), null, null);
     }
 
-    public UserResponse toUserResponse(User user){
-        return new UserResponse(user.getId(),user.getFirstName(),user.getLastName(), user.getEmail(), user.getRole());
+    public UserResponse toUserResponse(User user) {
+        return new UserResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRoleId());
     }
 }

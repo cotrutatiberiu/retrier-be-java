@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     public String login(UserLoginRequest userLoginRequest) {
         String email = userLoginRequest.email();
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email.toLowerCase());
 
         if (user.isEmpty() || !passwordEncoder.matches(userLoginRequest.password(), user.get().getPassword())) {
             throw new BadCredentialsException("Invalid email or password");

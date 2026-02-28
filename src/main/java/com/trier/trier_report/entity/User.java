@@ -8,15 +8,8 @@ import java.time.Instant;
 
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "tr")
 public class User {
-    public User(long id, String firstName, String lastName, String email, String encode, Role role) {
-    }
-
-    public enum Role {
-        USER
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,15 +21,14 @@ public class User {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email", unique = true,nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password",nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role",nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(name = "role_id", nullable = false)
+    private long roleId;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -46,16 +38,27 @@ public class User {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = Instant.now();
+    }
+
     public User() {
     }
 
-    public User(int id, String firstName, String lastName, String email, String password, Role role, Instant createdAt, Instant updatedAt) {
+    public User(int id, String firstName, String lastName, String email, String password, long roleId, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.roleId = roleId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -72,7 +75,7 @@ public class User {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstname(String firstName) {
         this.firstName = firstName;
     }
 
@@ -80,7 +83,7 @@ public class User {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastname(String lastName) {
         this.lastName = lastName;
     }
 
@@ -100,12 +103,12 @@ public class User {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public long getRoleId() {
+        return roleId;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoleId(long roleId) {
+        this.roleId = roleId;
     }
 
     public Instant getCreatedAt() {
@@ -132,7 +135,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", roleId='" + roleId + '\'' +
                 ", createdAt='" + createdAt + '\'' +
                 ", updatedAt='" + updatedAt + '\'' +
                 '}';

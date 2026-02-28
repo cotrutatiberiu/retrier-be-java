@@ -1,24 +1,26 @@
-package com.trier.trier_report.client;
+package com.trier.trier_report.client.impl;
 
 
+import com.trier.trier_report.client.WeatherClient;
 import com.trier.trier_report.dto.OpenWeatherResponse;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class OpenWeatherClient {
-    // TODO: move in super secret location
-    private final String API_KEY = "ad1ca86b26c60fa7e8cc5221e0a18e2c";
+public class OpenWeatherClientImpl implements WeatherClient {
+    @Value("${weather.api.key}")
+    private String API_KEY;
     private final String URL = "https://api.openweathermap.org/data/2.5";
     private final String PARAMS = "/weather?lat={lat}&lon={lon}&appid={key}";
     private final RestClient restClient;
 
-    public OpenWeatherClient() {
+    public OpenWeatherClientImpl() {
         this.restClient = RestClient.builder().baseUrl(URL).build();
     }
 
