@@ -13,7 +13,7 @@ public class Role {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public Role() {
+    protected Role() {
     }
 
     public Role(long id, String name) {

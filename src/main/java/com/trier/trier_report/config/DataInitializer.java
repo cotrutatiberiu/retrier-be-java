@@ -20,7 +20,8 @@ public class DataInitializer {
         return args -> {
             Optional<Role> userRole = roleRepository.findByName("USER");
             Role role = userRole.orElse(null);
-            if (userRole.isPresent()) {
+            Optional<User> u = userRepository.findByEmail("test@email.com");
+            if (userRole.isPresent() && u.isEmpty()) {
                 User user = new User();
                 user.setFirstname("testFirstname");
                 user.setLastname("testLastname");

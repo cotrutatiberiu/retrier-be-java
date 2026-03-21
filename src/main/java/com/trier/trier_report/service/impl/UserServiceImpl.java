@@ -17,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -25,19 +24,18 @@ public class UserServiceImpl implements UserService {
 
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
     public UserResponse register(UserRegisterRequest request) {
-        User user = userMapper.toEntity(request);
+        String encodedPassword = passwordEncoder.encode(request.password());
+        User user = UserMapper.toEntity(request, encodedPassword);
 
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new EmailUsedException("Email already used");
@@ -45,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
 
-        return userMapper.toUserResponse(savedUser);
+        return UserMapper.toUserResponse(savedUser);
     }
 
     public String login(UserLoginRequest userLoginRequest) {

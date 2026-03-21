@@ -2,11 +2,11 @@ package com.trier.trier_report.dao;
 
 import com.trier.trier_report.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@RepositoryRestResource(path = "role")
+@Repository
 public interface RoleRepository extends JpaRepository<Role, Integer> {
     Optional<Role> findByName(String name);
 }
