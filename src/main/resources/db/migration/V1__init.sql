@@ -21,7 +21,7 @@ CREATE TABLE users
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE UNIQUE INDEX uq_users_email_ci ON users (lower(email));
+CREATE UNIQUE INDEX uq_users_email ON users (lower(email));
 
 CREATE TABLE account_types
 (
@@ -46,6 +46,8 @@ CREATE TABLE accounts
     created_at      TIMESTAMPTZ DEFAULT now() NOT NULL,
     updated_at      TIMESTAMPTZ DEFAULT now() NOT NULL
 );
+
+CREATE UNIQUE INDEX uq_accounts_name ON accounts (lower(name));
 
 CREATE INDEX idx_accounts_user_id ON accounts (user_id);
 CREATE INDEX inx_accounts_account_type_id ON accounts(account_type_id);

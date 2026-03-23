@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class NewsClientImpl implements NewsClient {
+    public class NewsClientImpl implements NewsClient {
     @Value("${news.api.key}")
     private String API_KEY;
     private final String URL = "https://newsapi.org/v2/everything";

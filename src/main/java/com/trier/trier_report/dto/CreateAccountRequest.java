@@ -1,15 +1,17 @@
 package com.trier.trier_report.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record CreateAccountRequest(
-        @NotBlank
+        @NotNull
         long userId,
-        @NotBlank
+        @NotNull
         long accountTypeId,
+        @NotNull
+        long currencyId,
+
         @NotBlank
-        String name,
-        @NotBlank
-        long currencyId
+        String name
 ) {
 }
