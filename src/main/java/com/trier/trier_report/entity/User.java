@@ -49,26 +49,19 @@ public class User {
         updatedAt = Instant.now();
     }
 
-    public User() {
+    protected User() {
     }
 
-    public User(int id, String firstName, String lastName, String email, String password, long roleId, Instant createdAt, Instant updatedAt) {
-        this.id = id;
+    public User(String firstName, String lastName, String email, String password, long roleId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.roleId = roleId;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     public long getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getFirstName() {
@@ -113,10 +106,6 @@ public class User {
 
     public Instant getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
     }
 
     public Instant getUpdatedAt() {

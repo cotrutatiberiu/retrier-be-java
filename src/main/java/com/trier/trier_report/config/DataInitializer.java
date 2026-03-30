@@ -2,6 +2,7 @@ package com.trier.trier_report.config;
 
 import com.trier.trier_report.dao.RoleRepository;
 import com.trier.trier_report.dao.UserRepository;
+import com.trier.trier_report.entity.Account;
 import com.trier.trier_report.entity.Role;
 import com.trier.trier_report.entity.User;
 import org.springframework.boot.CommandLineRunner;
@@ -22,12 +23,7 @@ public class DataInitializer {
             Role role = userRole.orElse(null);
             Optional<User> u = userRepository.findByEmail("test@email.com");
             if (userRole.isPresent() && u.isEmpty()) {
-                User user = new User();
-                user.setFirstname("testFirstname");
-                user.setLastname("testLastname");
-                user.setEmail("test@email.com");
-                user.setPassword(encoder.encode("testPassword1234"));
-                user.setRoleId(role.getId());
+                User user = new User("testFirstname", "testLastname", "test@email.com", encoder.encode("testPassword1234"), role.getId());
 
                 userRepository.save(user);
                 System.out.println("User initialized.");
