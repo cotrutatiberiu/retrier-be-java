@@ -14,16 +14,16 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private long id;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
-    private long userId;
+    private Long userId;
 
     @Column(name = "account_type_id", nullable = false)
-    private long accountTypeId;
+    private Long accountTypeId;
 
     @Column(name = "currency_id", nullable = false)
-    private long currencyId;
+    private Long currencyId;
 
     @Column(name = "name", unique = true, nullable = false)
     private String name;
@@ -42,7 +42,7 @@ public class Account {
     protected Account() {
     }
 
-    public Account(long userId, long accountTypeId, long currencyId, String name) {
+    public Account(Long userId, Long accountTypeId, Long currencyId, String name) {
         this.userId = userId;
         this.accountTypeId = accountTypeId;
         this.name = name;
@@ -50,31 +50,31 @@ public class Account {
         this.archived = false;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public long getAccountTypeId() {
+    public Long getAccountTypeId() {
         return accountTypeId;
     }
 
-    public void setAccountTypeId(long accountTypeId) {
+    public void setAccountTypeId(Long accountTypeId) {
         this.accountTypeId = accountTypeId;
     }
 
-    public long getCurrencyId() {
+    public Long getCurrencyId() {
         return currencyId;
     }
 
-    public void setCurrencyId(long currencyId) {
+    public void setCurrencyId(Long currencyId) {
         this.currencyId = currencyId;
     }
 

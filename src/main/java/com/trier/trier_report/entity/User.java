@@ -13,7 +13,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -28,7 +28,7 @@ public class User {
     private String password;
 
     @Column(name = "role_id", nullable = false)
-    private long roleId;
+    private Long roleId;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -52,7 +52,7 @@ public class User {
     protected User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, long roleId) {
+    public User(String firstName, String lastName, String email, String password, Long roleId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -60,7 +60,7 @@ public class User {
         this.roleId = roleId;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -96,11 +96,11 @@ public class User {
         this.password = password;
     }
 
-    public long getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(long roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 

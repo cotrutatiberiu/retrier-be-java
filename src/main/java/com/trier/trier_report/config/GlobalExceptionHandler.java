@@ -4,6 +4,7 @@ import com.trier.trier_report.dto.ErrorResponse;
 import com.trier.trier_report.exception.AccessTokenExpiredException;
 import com.trier.trier_report.exception.EmailUsedException;
 import com.trier.trier_report.exception.RefreshTokenExpiredException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -38,6 +39,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessTokenExpiredException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(AccessTokenExpiredException ex) {
         ErrorResponse response = new ErrorResponse(401);
+        response.setErrors(new String[]{ex.getMessage()});
+
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(EntityNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(404);
         response.setErrors(new String[]{ex.getMessage()});
 
         return ResponseEntity.status(response.getStatus()).body(response);

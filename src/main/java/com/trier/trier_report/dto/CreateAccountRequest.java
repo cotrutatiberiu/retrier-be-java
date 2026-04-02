@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotNull;
 
 public record CreateAccountRequest(
         @NotNull
-        long userId,
+        Long userId,
         @NotNull
-        long accountTypeId,
+        Long accountTypeId,
         @NotNull
-        long currencyId,
+        Long currencyId,
 
         @NotBlank
         String name

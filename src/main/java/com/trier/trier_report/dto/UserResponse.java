@@ -1,10 +1,10 @@
 package com.trier.trier_report.dto;
 
 public record UserResponse(
-        long id,
+        Long id,
         String firstName,
         String lastName,
         String email,
-        long roleId
+        Long roleId
 ) {
 }

@@ -15,6 +15,6 @@ public record UserRegisterRequest(
         @Size(min = 8, message = "Password must be at least 8 characters")
         String password,
         @NotBlank
-        long roleId
+        Long roleId
 ) {
 }
