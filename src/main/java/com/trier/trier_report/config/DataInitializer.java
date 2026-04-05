@@ -1,8 +1,9 @@
 package com.trier.trier_report.config;
 
+import com.trier.trier_report.dao.CurrencyRepository;
 import com.trier.trier_report.dao.RoleRepository;
 import com.trier.trier_report.dao.UserRepository;
-import com.trier.trier_report.entity.Account;
+import com.trier.trier_report.entity.Currency;
 import com.trier.trier_report.entity.Role;
 import com.trier.trier_report.entity.User;
 import org.springframework.boot.CommandLineRunner;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @EnableWebSecurity
 public class DataInitializer {
     @Bean
-    CommandLineRunner initDatabase(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder encoder) {
+    CommandLineRunner initDatabase(RoleRepository roleRepository, UserRepository userRepository, CurrencyRepository currencyRepository, PasswordEncoder encoder) {
         return args -> {
             Optional<Role> userRole = roleRepository.findByName("USER");
             Role role = userRole.orElse(null);

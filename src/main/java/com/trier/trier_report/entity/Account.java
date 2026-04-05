@@ -102,10 +102,6 @@ public class Account {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public String toString() {
         return "Account{" + "id=" + id + ", userId=" + userId + ", accountTypeId=" + accountTypeId + ", name='" + name + '\'' + ", currencyId='" + currencyId + '\'' + ", archived=" + archived + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';

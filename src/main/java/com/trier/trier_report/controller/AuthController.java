@@ -61,10 +61,12 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        Cookie refreshCookie = new Cookie("nt", "");
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        Cookie refreshCookie = new Cookie("rt", null);
         refreshCookie.setMaxAge(0);
         refreshCookie.setPath("/api/auth");
+
+        response.addCookie(refreshCookie);
         return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, refreshCookie.toString()).build();
     }
 }
