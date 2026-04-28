@@ -1,19 +1,17 @@
 package com.trier.trier_report.controller;
 
-import com.trier.trier_report.dto.AccountArchive;
-import com.trier.trier_report.dto.AccountResponse;
-import com.trier.trier_report.dto.AccountUpdateRequest;
-import com.trier.trier_report.dto.AccountCreateRequest;
+import com.trier.trier_report.dto.AccountArchiveDTO;
+import com.trier.trier_report.dto.AccountResponseDTO;
+import com.trier.trier_report.dto.AccountUpdateRequestDTO;
+import com.trier.trier_report.dto.AccountCreateRequestDTO;
 import com.trier.trier_report.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/accounts")
 public class AccountController {
     private final AccountService accountService;
 
@@ -23,26 +21,20 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody AccountCreateRequest request) {
-        accountService.createAccount(request);
+    public ResponseEntity<Void> create(@Valid @RequestBody AccountCreateRequestDTO request) {
+        accountService.create(request);
 
         return ResponseEntity.status(201).build();
     }
 
-    // TODO: move id in url
-    @GetMapping
-    public ResponseEntity<List<AccountResponse>> getUserAccounts(@RequestParam Long userId) {
-        return ResponseEntity.ok(accountService.getUserAccounts(userId));
-    }
-
     @PatchMapping
-    public ResponseEntity<AccountResponse> updateAccount(@Valid @RequestBody AccountUpdateRequest request) {
-        return ResponseEntity.ok(accountService.updateAccount(request));
+    public ResponseEntity<AccountResponseDTO> update(@Valid @RequestBody AccountUpdateRequestDTO request) {
+        return ResponseEntity.ok(accountService.update(request));
     }
 
     @PatchMapping("/{id}/archive")
-    public ResponseEntity<Void> archiveAccount(@PathVariable Long id, @Valid @RequestBody AccountArchive request) {
-        accountService.archiveAccount(id, request);
+    public ResponseEntity<Void> archive(@PathVariable Long id, @Valid @RequestBody AccountArchiveDTO request) {
+        accountService.archive(id, request);
         return ResponseEntity.status(200).build();
     }
 }

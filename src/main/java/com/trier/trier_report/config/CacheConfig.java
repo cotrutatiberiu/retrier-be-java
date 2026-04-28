@@ -3,7 +3,7 @@ package com.trier.trier_report.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.trier.trier_report.dto.NewsResponse;
+import com.trier.trier_report.dto.NewsResponseDTO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -27,7 +27,7 @@ public class CacheConfig {
 
     @Bean
     public RedisCacheManager newsCacheManager(RedisConnectionFactory cf) {
-        var serializer = new Jackson2JsonRedisSerializer<>(baseMapper(), NewsResponse.class);
+        var serializer = new Jackson2JsonRedisSerializer<>(baseMapper(), NewsResponseDTO.class);
 
         var config = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))

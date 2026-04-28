@@ -1,7 +1,7 @@
 package com.trier.trier_report.client;
 
-import com.trier.trier_report.dto.NewsResponse;
+import com.trier.trier_report.dto.NewsResponseDTO;
 
 public interface NewsClient {
-    NewsResponse fetchNews(String q, String from, String sortBy);
+    NewsResponseDTO fetchNews(String q, String from, String sortBy);
 }

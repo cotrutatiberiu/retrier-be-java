@@ -1,69 +1,45 @@
 package com.trier.trier_report.service.impl;
 
+import com.trier.trier_report.dao.AccountRepository;
 import com.trier.trier_report.dao.UserRepository;
-import com.trier.trier_report.dto.UserLoginRequest;
-import com.trier.trier_report.dto.UserRegisterRequest;
-import com.trier.trier_report.dto.UserResponse;
-import com.trier.trier_report.entity.User;
-import com.trier.trier_report.exception.EmailUsedException;
-import com.trier.trier_report.mapper.UserMapper;
+import com.trier.trier_report.dto.AccountResponseDTO;
+import com.trier.trier_report.dto.UserAccountsSearchRequestDTO;
+import com.trier.trier_report.entity.Account;
+import com.trier.trier_report.mapper.AccountMapper;
 import com.trier.trier_report.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    private final AuthenticationManager authenticationManager;
+    private final AccountRepository accountRepository;
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.authenticationManager = authenticationManager;
+    public UserServiceImpl(AccountRepository accountRepository, UserRepository userRepository) {
+        this.accountRepository = accountRepository;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    public UserResponse register(UserRegisterRequest request) {
-        String encodedPassword = passwordEncoder.encode(request.password());
-        User user = UserMapper.toEntity(request, encodedPassword);
-
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new EmailUsedException("Email already used");
+    @Override
+    public Page<AccountResponseDTO> findAccountsByUserId(Long userId, UserAccountsSearchRequestDTO request) {
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User not found: " + userId);
         }
 
-        User savedUser = userRepository.save(user);
-
-        return UserMapper.toUserResponse(savedUser);
+        List<Account> accounts = accountRepository.findAllByUserId(userId);
+        long count = accounts.size();
+        Pageable pageRequest = PageRequest.of(request.pageNumber(), request.pageSize(), Sort.by(request.sortBy().getField()).ascending());
+        var pages = new PageImpl<>(accounts, pageRequest, count);
+        return AccountMapper.toDto(pages);
     }
 
-    public String login(UserLoginRequest userLoginRequest) {
-        String email = userLoginRequest.email();
-        Optional<User> user = userRepository.findByEmail(email.toLowerCase());
+    @Override
+    public AccountResponseDTO findAccountByUserId(Long userId, Long accountId) {
+        Account account = accountRepository.findByIdAndUserId(userId, accountId).orElseThrow(() -> new EntityNotFoundException("Account not found: " + accountId));
 
-        if (user.isEmpty() || !passwordEncoder.matches(userLoginRequest.password(), user.get().getPassword())) {
-            throw new BadCredentialsException("Invalid email or password");
-        }
-
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.email(), userLoginRequest.password()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return email;
-    }
-
-    public String isAuthenticated() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        return auth.getName();
+        return AccountMapper.toDto(account);
     }
 }

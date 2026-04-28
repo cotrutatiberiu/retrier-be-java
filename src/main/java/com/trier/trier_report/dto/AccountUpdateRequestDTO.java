@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record AccountUpdateRequest(
+public record AccountUpdateRequestDTO(
         @NotNull
         Long id,
         @NotBlank

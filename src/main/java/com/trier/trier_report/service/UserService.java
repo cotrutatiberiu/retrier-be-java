@@ -1,13 +1,11 @@
 package com.trier.trier_report.service;
 
-import com.trier.trier_report.dto.UserLoginRequest;
-import com.trier.trier_report.dto.UserRegisterRequest;
-import com.trier.trier_report.dto.UserResponse;
+import com.trier.trier_report.dto.AccountResponseDTO;
+import com.trier.trier_report.dto.UserAccountsSearchRequestDTO;
+import org.springframework.data.domain.Page;
 
 public interface UserService {
-    UserResponse register(UserRegisterRequest request);
+    AccountResponseDTO findAccountByUserId(Long userId, Long accountId);
 
-    String login(UserLoginRequest userLoginRequest);
-
-    String isAuthenticated();
+    Page<AccountResponseDTO> findAccountsByUserId(Long userId, UserAccountsSearchRequestDTO request);
 }

@@ -2,10 +2,10 @@ package com.trier.trier_report.service.impl;
 
 import com.trier.trier_report.dao.AccountRepository;
 import com.trier.trier_report.dao.UserRepository;
-import com.trier.trier_report.dto.AccountArchive;
-import com.trier.trier_report.dto.AccountResponse;
-import com.trier.trier_report.dto.AccountUpdateRequest;
-import com.trier.trier_report.dto.AccountCreateRequest;
+import com.trier.trier_report.dto.AccountArchiveDTO;
+import com.trier.trier_report.dto.AccountResponseDTO;
+import com.trier.trier_report.dto.AccountUpdateRequestDTO;
+import com.trier.trier_report.dto.AccountCreateRequestDTO;
 import com.trier.trier_report.entity.Account;
 import com.trier.trier_report.mapper.AccountMapper;
 import com.trier.trier_report.service.AccountService;
@@ -13,9 +13,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -30,26 +27,14 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void createAccount(AccountCreateRequest payload) {
+    public void create(AccountCreateRequestDTO payload) {
         Account account = AccountMapper.toEntity(payload);
         accountRepository.save(account);
     }
 
     @Override
-    public List<AccountResponse> getUserAccounts(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new EntityNotFoundException("User not found");
-        }
-
-        List<Account> userAccounts = accountRepository.findAllByUserId(userId);
-        return userAccounts.stream().map(
-                AccountMapper::toDto
-        ).toList();
-    }
-
-    @Override
     @Transactional
-    public AccountResponse updateAccount(AccountUpdateRequest payload) {
+    public AccountResponseDTO update(AccountUpdateRequestDTO payload) {
         Account account = accountRepository.findById(payload.id()).orElseThrow(() -> new EntityNotFoundException("Account not found with ID " + payload.id()));
 
         if (payload.currencyId() != null) {
@@ -65,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void archiveAccount(Long id, AccountArchive payload) {
+    public void archive(Long id, AccountArchiveDTO payload) {
         Account account = accountRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Account not found with ID " + id));
 
         account.setArchived(payload.archived());

@@ -1,11 +1,11 @@
 package com.trier.trier_report.dto;
 
-public class ErrorResponse {
+public class ErrorResponseDTO {
     private int status;
     private String[] faults;
     private Object[] errors;
 
-    public ErrorResponse(int status) {
+    public ErrorResponseDTO(int status) {
         this.status = status;
     }
 
