@@ -2,7 +2,7 @@ package com.trier.trier_report.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-public record AccountArchiveDTO(
+public record AccountArchiveRequest(
         @NotNull
         boolean archived
 ) {

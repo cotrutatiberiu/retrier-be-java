@@ -1,11 +1,11 @@
 package com.trier.trier_report.service;
 
-import com.trier.trier_report.dto.AccountResponseDTO;
-import com.trier.trier_report.dto.UserAccountsSearchRequestDTO;
-import org.springframework.data.domain.Page;
+import com.trier.trier_report.dto.AccountResponse;
+import com.trier.trier_report.dto.PaginatedResponse;
+import com.trier.trier_report.dto.UserAccountsSearchRequest;
 
 public interface UserService {
-    AccountResponseDTO findAccountByUserId(Long userId, Long accountId);
+    AccountResponse findAccountByUserId(Long userId, Long accountId);
 
-    Page<AccountResponseDTO> findAccountsByUserId(Long userId, UserAccountsSearchRequestDTO request);
+    PaginatedResponse<AccountResponse> findAccountsByUserId(Long userId, UserAccountsSearchRequest request);
 }

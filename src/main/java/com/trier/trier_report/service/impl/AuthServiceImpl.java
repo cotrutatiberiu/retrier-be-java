@@ -1,9 +1,9 @@
 package com.trier.trier_report.service.impl;
 
 import com.trier.trier_report.dao.UserRepository;
-import com.trier.trier_report.dto.UserLoginRequestDTO;
-import com.trier.trier_report.dto.UserRegisterRequestDTO;
-import com.trier.trier_report.dto.UserResponseDTO;
+import com.trier.trier_report.dto.UserLoginRequest;
+import com.trier.trier_report.dto.UserRegisterRequest;
+import com.trier.trier_report.dto.UserResponse;
 import com.trier.trier_report.entity.User;
 import com.trier.trier_report.exception.EmailUsedException;
 import com.trier.trier_report.mapper.UserMapper;
@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserResponseDTO register(UserRegisterRequestDTO request) {
+    public UserResponse register(UserRegisterRequest request) {
         String encodedPassword = passwordEncoder.encode(request.password());
         User user = UserMapper.toEntity(request, encodedPassword);
 
@@ -46,15 +46,15 @@ public class AuthServiceImpl implements AuthService {
         return UserMapper.toUserResponse(savedUser);
     }
 
-    public String login(UserLoginRequestDTO userLoginRequestDTO) {
-        String email = userLoginRequestDTO.email();
+    public String login(UserLoginRequest userLoginRequest) {
+        String email = userLoginRequest.email();
         Optional<User> user = userRepository.findByEmail(email.toLowerCase());
 
-        if (user.isEmpty() || !passwordEncoder.matches(userLoginRequestDTO.password(), user.get().getPassword())) {
+        if (user.isEmpty() || !passwordEncoder.matches(userLoginRequest.password(), user.get().getPassword())) {
             throw new BadCredentialsException("Invalid email or password");
         }
 
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequestDTO.email(), userLoginRequestDTO.password()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequest.email(), userLoginRequest.password()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

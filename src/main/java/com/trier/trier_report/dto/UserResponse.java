@@ -1,6 +1,6 @@
 package com.trier.trier_report.dto;
 
-public record UserResponseDTO(
+public record UserResponse(
         Long id,
         String firstName,
         String lastName,

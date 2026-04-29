@@ -6,20 +6,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-public record NewsResponseDTO(
+public record NewsResponse(
         @JsonProperty("status") String status,
         @JsonProperty("totalResults") int totalResults,
-        @JsonProperty("articles") List<ArticleDTO> articleDTOS
+        @JsonProperty("articles") List<Article> articles
 ) {
     @JsonCreator
-    public NewsResponseDTO {
+    public NewsResponse {
         if (status == null) status = "";
-        if (articleDTOS == null) articleDTOS = List.of();
+        if (articles == null) articles = List.of();
     }
 }
 
-record ArticleDTO(
-        @JsonProperty("source") SourceDTO sourceDTO,
+record Article(
+        @JsonProperty("source") Source source,
         @JsonProperty("author") String author,
         @JsonProperty("title") String title,
         @JsonProperty("description") String description,
@@ -30,7 +30,7 @@ record ArticleDTO(
         @JsonProperty("content") String content
 ) {
     @JsonCreator
-    public ArticleDTO {
+    public Article {
         // normalize nulls to empty strings if desired
         if (author == null) author = "";
         if (title == null) title = "";
@@ -39,16 +39,16 @@ record ArticleDTO(
         if (urlToImage == null) urlToImage = "";
         if (content == null) content = "";
         // source may be null in some payloads; keep as-is or provide fallback
-        if (sourceDTO == null) sourceDTO = new SourceDTO(null, "");
+        if (source == null) source = new Source(null, "");
     }
 }
 
-record SourceDTO(
+record Source(
         @JsonProperty("id") String id,
         @JsonProperty("name") String name
 ) {
     @JsonCreator
-    public SourceDTO {
+    public Source {
         if (id != null && id.isBlank()) id = null;
         if (name == null) name = "";
     }

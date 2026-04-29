@@ -1,15 +1,15 @@
 package com.trier.trier_report.mapper;
 
-import com.trier.trier_report.dto.UserRegisterRequestDTO;
-import com.trier.trier_report.dto.UserResponseDTO;
+import com.trier.trier_report.dto.UserRegisterRequest;
+import com.trier.trier_report.dto.UserResponse;
 import com.trier.trier_report.entity.User;
 
 public class UserMapper {
-    public static User toEntity(UserRegisterRequestDTO payload, String encodedPassword) {
+    public static User toEntity(UserRegisterRequest payload, String encodedPassword) {
         return new User(payload.firstName(), payload.lastName(), payload.email(), encodedPassword, payload.roleId());
     }
 
-    public static UserResponseDTO toUserResponse(User user) {
-        return new UserResponseDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRoleId());
+    public static UserResponse toUserResponse(User user) {
+        return new UserResponse(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRoleId());
     }
 }

@@ -1,9 +1,9 @@
 package com.trier.trier_report.controller;
 
-import com.trier.trier_report.dto.AccountArchiveDTO;
-import com.trier.trier_report.dto.AccountResponseDTO;
-import com.trier.trier_report.dto.AccountUpdateRequestDTO;
-import com.trier.trier_report.dto.AccountCreateRequestDTO;
+import com.trier.trier_report.dto.AccountArchiveRequest;
+import com.trier.trier_report.dto.AccountResponse;
+import com.trier.trier_report.dto.AccountUpdateRequest;
+import com.trier.trier_report.dto.AccountCreateRequest;
 import com.trier.trier_report.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +21,19 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@Valid @RequestBody AccountCreateRequestDTO request) {
+    public ResponseEntity<Void> create(@Valid @RequestBody AccountCreateRequest request) {
         accountService.create(request);
 
         return ResponseEntity.status(201).build();
     }
 
     @PatchMapping
-    public ResponseEntity<AccountResponseDTO> update(@Valid @RequestBody AccountUpdateRequestDTO request) {
+    public ResponseEntity<AccountResponse> update(@Valid @RequestBody AccountUpdateRequest request) {
         return ResponseEntity.ok(accountService.update(request));
     }
 
     @PatchMapping("/{id}/archive")
-    public ResponseEntity<Void> archive(@PathVariable Long id, @Valid @RequestBody AccountArchiveDTO request) {
+    public ResponseEntity<Void> archive(@PathVariable Long id, @Valid @RequestBody AccountArchiveRequest request) {
         accountService.archive(id, request);
         return ResponseEntity.status(200).build();
     }

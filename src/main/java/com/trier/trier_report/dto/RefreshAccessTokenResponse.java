@@ -1,9 +1,6 @@
 package com.trier.trier_report.dto;
 
-public record LoginResponseDTO(
+public record RefreshAccessTokenResponse(
         String accessToken
 ) {
 }
-
-
-

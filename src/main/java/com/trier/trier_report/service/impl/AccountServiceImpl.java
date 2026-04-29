@@ -2,10 +2,10 @@ package com.trier.trier_report.service.impl;
 
 import com.trier.trier_report.dao.AccountRepository;
 import com.trier.trier_report.dao.UserRepository;
-import com.trier.trier_report.dto.AccountArchiveDTO;
-import com.trier.trier_report.dto.AccountResponseDTO;
-import com.trier.trier_report.dto.AccountUpdateRequestDTO;
-import com.trier.trier_report.dto.AccountCreateRequestDTO;
+import com.trier.trier_report.dto.AccountArchiveRequest;
+import com.trier.trier_report.dto.AccountResponse;
+import com.trier.trier_report.dto.AccountUpdateRequest;
+import com.trier.trier_report.dto.AccountCreateRequest;
 import com.trier.trier_report.entity.Account;
 import com.trier.trier_report.mapper.AccountMapper;
 import com.trier.trier_report.service.AccountService;
@@ -27,14 +27,14 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void create(AccountCreateRequestDTO payload) {
+    public void create(AccountCreateRequest payload) {
         Account account = AccountMapper.toEntity(payload);
         accountRepository.save(account);
     }
 
     @Override
     @Transactional
-    public AccountResponseDTO update(AccountUpdateRequestDTO payload) {
+    public AccountResponse update(AccountUpdateRequest payload) {
         Account account = accountRepository.findById(payload.id()).orElseThrow(() -> new EntityNotFoundException("Account not found with ID " + payload.id()));
 
         if (payload.currencyId() != null) {
@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional
-    public void archive(Long id, AccountArchiveDTO payload) {
+    public void archive(Long id, AccountArchiveRequest payload) {
         Account account = accountRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Account not found with ID " + id));
 
         account.setArchived(payload.archived());

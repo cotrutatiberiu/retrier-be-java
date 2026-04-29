@@ -1,6 +1,6 @@
 package com.trier.trier_report.config;
 
-import com.trier.trier_report.dto.ErrorResponseDTO;
+import com.trier.trier_report.dto.ErrorResponse;
 import com.trier.trier_report.exception.AccessTokenExpiredException;
 import com.trier.trier_report.exception.EmailUsedException;
 import com.trier.trier_report.exception.RefreshTokenExpiredException;
@@ -13,40 +13,40 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(EmailUsedException.class)
-    public ResponseEntity<ErrorResponseDTO> handleEmailAlreadyRegisteredException(EmailUsedException ex) {
-        ErrorResponseDTO response = new ErrorResponseDTO(409);
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyRegisteredException(EmailUsedException ex) {
+        ErrorResponse response = new ErrorResponse(409);
         response.setErrors(new String[]{ex.getMessage()});
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponseDTO> handleBadCredentials(BadCredentialsException ex) {
-        ErrorResponseDTO response = new ErrorResponseDTO(401);
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex) {
+        ErrorResponse response = new ErrorResponse(401);
         response.setErrors(new String[]{ex.getMessage()});
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @ExceptionHandler(RefreshTokenExpiredException.class)
-    public ResponseEntity<ErrorResponseDTO> handleBadCredentials(RefreshTokenExpiredException ex) {
-        ErrorResponseDTO response = new ErrorResponseDTO(403);
+    public ResponseEntity<ErrorResponse> handleBadCredentials(RefreshTokenExpiredException ex) {
+        ErrorResponse response = new ErrorResponse(403);
         response.setErrors(new String[]{ex.getMessage()});
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @ExceptionHandler(AccessTokenExpiredException.class)
-    public ResponseEntity<ErrorResponseDTO> handleBadCredentials(AccessTokenExpiredException ex) {
-        ErrorResponseDTO response = new ErrorResponseDTO(401);
+    public ResponseEntity<ErrorResponse> handleBadCredentials(AccessTokenExpiredException ex) {
+        ErrorResponse response = new ErrorResponse(401);
         response.setErrors(new String[]{ex.getMessage()});
 
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponseDTO> handleBadCredentials(EntityNotFoundException ex) {
-        ErrorResponseDTO response = new ErrorResponseDTO(404);
+    public ResponseEntity<ErrorResponse> handleBadCredentials(EntityNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(404);
         response.setErrors(new String[]{ex.getMessage()});
 
         return ResponseEntity.status(response.getStatus()).body(response);

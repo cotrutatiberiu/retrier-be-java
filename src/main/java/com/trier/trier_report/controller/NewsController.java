@@ -1,6 +1,6 @@
 package com.trier.trier_report.controller;
 
-import com.trier.trier_report.dto.NewsResponseDTO;
+import com.trier.trier_report.dto.NewsResponse;
 import com.trier.trier_report.service.NewsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class NewsController {
     }
 
     @GetMapping("/today")
-    public ResponseEntity<NewsResponseDTO> getNews(
+    public ResponseEntity<NewsResponse> getNews(
             @RequestParam(required = true, defaultValue = "") String q,
             @RequestParam(required = true, defaultValue = "") String from,
             @RequestParam(required = true, defaultValue = "") String sortBy

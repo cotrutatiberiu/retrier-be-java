@@ -1,13 +1,13 @@
 package com.trier.trier_report.service;
 
-import com.trier.trier_report.dto.UserLoginRequestDTO;
-import com.trier.trier_report.dto.UserRegisterRequestDTO;
-import com.trier.trier_report.dto.UserResponseDTO;
+import com.trier.trier_report.dto.UserLoginRequest;
+import com.trier.trier_report.dto.UserRegisterRequest;
+import com.trier.trier_report.dto.UserResponse;
 
 public interface AuthService {
-    UserResponseDTO register(UserRegisterRequestDTO request);
+    UserResponse register(UserRegisterRequest request);
 
-    String login(UserLoginRequestDTO userLoginRequestDTO);
+    String login(UserLoginRequest userLoginRequest);
 
     String isAuthenticated();
 }

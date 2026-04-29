@@ -2,7 +2,7 @@ package com.trier.trier_report.dto;
 
 import java.time.Instant;
 
-public record AccountResponseDTO(
+public record AccountResponse(
         Long id,
         Long userId,
         Long currencyId,

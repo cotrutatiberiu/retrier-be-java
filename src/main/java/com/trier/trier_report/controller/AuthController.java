@@ -25,14 +25,14 @@ public class AuthController {
     }
 
     @PostMapping("/register") //@Valid for jakarta request body validation
-    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRegisterRequestDTO request) {
-        UserResponseDTO response = authService.register(request);
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRegisterRequest request) {
+        UserResponse response = authService.register(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody UserLoginRequestDTO request, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginRequest request, HttpServletResponse response) {
         String loggedEmail = authService.login(request);
 
         String accessToken = jwtUtil.generateAccessToken(loggedEmail);
@@ -45,14 +45,14 @@ public class AuthController {
 
         response.addCookie(refreshTokenCookie);
 
-        return ResponseEntity.ok(new LoginResponseDTO(accessToken));
+        return ResponseEntity.ok(new LoginResponse(accessToken));
     }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<Object> resetAccessToken(@CookieValue(value = "rt", required = false) String cookieRefreshToken) {
 
         String newAccessToken = jwtUtil.refreshAccessToken(cookieRefreshToken);
-        return ResponseEntity.ok(new RefreshAccessTokenResponseDTO(newAccessToken));
+        return ResponseEntity.ok(new RefreshAccessTokenResponse(newAccessToken));
     }
 
     @GetMapping("/authenticated")

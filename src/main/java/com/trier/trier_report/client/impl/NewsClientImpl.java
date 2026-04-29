@@ -1,7 +1,7 @@
 package com.trier.trier_report.client.impl;
 
 import com.trier.trier_report.client.NewsClient;
-import com.trier.trier_report.dto.NewsResponseDTO;
+import com.trier.trier_report.dto.NewsResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ import java.util.Map;
         this.restClient = RestClient.builder().baseUrl(URL).build();
     }
 
-    public NewsResponseDTO fetchNews(String q, String from, String sortBy) {
+    public NewsResponse fetchNews(String q, String from, String sortBy) {
         Map<String, String> uriVariables = new HashMap<>();
         uriVariables.put("q", q);
         uriVariables.put("from", from);
@@ -41,7 +41,7 @@ import java.util.Map;
                     .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
                         throw new HttpClientErrorException(response.getStatusCode(), "News Client Error: " + response.getStatusText());
                     })
-                    .body(NewsResponseDTO.class);
+                    .body(NewsResponse.class);
         } catch (Exception e) {
             System.err.println("Failed to fetch news data: " + e.getMessage());
             throw new RuntimeException("News service is unavailable.", e);
