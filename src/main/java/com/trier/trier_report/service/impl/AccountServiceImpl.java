@@ -1,7 +1,6 @@
 package com.trier.trier_report.service.impl;
 
 import com.trier.trier_report.dao.AccountRepository;
-import com.trier.trier_report.dao.UserRepository;
 import com.trier.trier_report.dto.AccountArchiveRequest;
 import com.trier.trier_report.dto.AccountResponse;
 import com.trier.trier_report.dto.AccountUpdateRequest;
@@ -17,12 +16,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository, UserRepository userRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
     }
 
     @Override

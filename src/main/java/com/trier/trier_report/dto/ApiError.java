@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Can be swapped with built-in ProblemDetail
 public class ApiError {
     private final int status;
     private final String path;

@@ -10,6 +10,7 @@ import com.trier.trier_report.mapper.AccountMapper;
 import com.trier.trier_report.mapper.PaginationMapper;
 import com.trier.trier_report.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class UserServiceImpl implements UserService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
 
+    @Autowired
     public UserServiceImpl(AccountRepository accountRepository, UserRepository userRepository) {
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
